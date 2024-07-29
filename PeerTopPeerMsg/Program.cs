@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using System.Text;
 
+namespace PeerTopPeerMsg;
+
 class Program
 {
     static void Main(string[] args)
@@ -82,13 +84,9 @@ internal class Peer
     {
         var buffer = Encoding.UTF8.GetBytes(message);
 
-        foreach (var client in _clients)
+        foreach (var stream in from client in _clients where client.Connected select client.GetStream())
         {
-            if (client.Connected)
-            {
-                var stream = client.GetStream();
-                stream.Write(buffer, 0, buffer.Length);
-            }
+            stream.Write(buffer, 0, buffer.Length);
         }
     }
 
